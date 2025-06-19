@@ -1,0 +1,46 @@
+[Ll]ibrary/
+[Tt]emp/
+[Bb]uild/
+[Bb]uilds/
+Obj/
+[Bb]in/
+[Ll]ogs/
+MemoryCaptures/
+
+# VS / JetBrains / Rider
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.sdf
+
+# VSCode
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Others
+*.apk
+*.aab
+*.log
+*.tmp
+*.bak
+*.swp
+*.tmp
+*.old
+*.orig
+*.patch
+
+# Crash & Analytics
+sysinfo.txt

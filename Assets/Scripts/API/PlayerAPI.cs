@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
+using System.Text;
 
 public static class PlayerAPI
 {
@@ -151,17 +152,25 @@ public static class PlayerAPI
 
     public static IEnumerator LogoutPlayer(Action onSuccess, Action<string> onError)
     {
+        string url = $"{GameConfig.ApiBaseUrl}/player/logout";
         string token = PlayerPrefs.GetString("token");
-
+        int playerid = PlayerPrefs.GetInt("playerid");
+        string jsonData = JsonConvert.SerializeObject(new { playerId = playerid });
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+        
         if (string.IsNullOrEmpty(token))
         {
             onError?.Invoke("Token không hợp lệ hoặc đã hết hạn");
             yield break;
         }
 
-        string url = $"{GameConfig.ApiBaseUrl}/player/logout";
         var request = new UnityWebRequest(url, "POST");
         request.SetRequestHeader("Authorization", "Bearer " + token);
+        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Authorization", "Bearer " + token);
+        request.SetRequestHeader("Content-Type", "application/json");
+        
         yield return request.SendWebRequest();
 
         if (request.result != UnityWebRequest.Result.Success)

@@ -148,4 +148,37 @@ public static class PlayerAPI
             onError?.Invoke(request.error);
         }
     }
+
+    public static IEnumerator LogoutPlayer(Action onSuccess, Action<string> onError)
+    {
+        string token = PlayerPrefs.GetString("token");
+
+        if (string.IsNullOrEmpty(token))
+        {
+            onError?.Invoke("Token không hợp lệ hoặc đã hết hạn");
+            yield break;
+        }
+
+        string url = $"{GameConfig.ApiBaseUrl}/player/logout";
+        var request = new UnityWebRequest(url, "POST");
+        request.SetRequestHeader("Authorization", "Bearer " + token);
+        yield return request.SendWebRequest();
+
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            onError?.Invoke($"Lỗi mạng: {request.error}");
+        }
+        else if (request.responseCode == 200)
+        {
+            PlayerPrefs.DeleteKey("token");
+            PlayerPrefs.DeleteKey("playerid");
+            PlayerPrefs.DeleteKey("userId");
+            onSuccess?.Invoke();
+        }
+        else
+        {
+            string message = $"Lỗi không xác định ({request.responseCode})";
+            onError?.Invoke(message);
+        }
+    }
 }

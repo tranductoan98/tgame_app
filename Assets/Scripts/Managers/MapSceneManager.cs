@@ -68,6 +68,12 @@ public class MapSceneManager : MonoBehaviour
 
             StartCoroutine(PlayerAPI.GetPlayersInMap(mapId, players =>
             {
+                foreach (var kvp in otherPlayers)
+                {
+                    Destroy(kvp.Value);
+                }
+                otherPlayers.Clear();
+
                 foreach (var otherPlayer in players)
                 {
                     if (otherPlayer.playerId == playerid)
@@ -108,7 +114,6 @@ public class MapSceneManager : MonoBehaviour
             obj.transform.localScale = Vector3.one;
         }
     }
-
     Sprite LoadTileSprite(MapTileData tile)
     {
         if (!atlasCache.TryGetValue(tile.imageId, out Texture2D atlas))
@@ -120,7 +125,6 @@ public class MapSceneManager : MonoBehaviour
         Vector2 pivot = new Vector2(0.5f, 0.5f);
         return Sprite.Create(atlas, rect, pivot, tile.w);
     }
-
     public bool CanMoveToPosition(Vector2 worldPosition)
     {
         int tileX = Mathf.FloorToInt(worldPosition.x / tileSize);
@@ -137,7 +141,6 @@ public class MapSceneManager : MonoBehaviour
 
         return false;
     }
-
     public void OnSocketMessageReceived(string json)
     {
         var baseMsg = JsonConvert.DeserializeObject<BaseSocketMessage>(json);
@@ -152,6 +155,10 @@ public class MapSceneManager : MonoBehaviour
             case "player_online":
                 HandlePlayerOnline(json);
                 break;
+
+            case "player_offline":
+                HandlePlayerOffline(json);
+                break;
         }
     }
 
@@ -160,7 +167,7 @@ public class MapSceneManager : MonoBehaviour
         var otherPlayer = JsonConvert.DeserializeObject<PlayerOnlineMessage>(json);
         if (otherPlayer == null) return;
 
-        if (otherPlayers.ContainsKey(otherPlayer.playerId)) return; 
+        if (otherPlayers.ContainsKey(otherPlayer.playerId)) return;
 
         GameObject otherPlayerGO = new GameObject($"Player_{otherPlayer.playerId}");
         otherPlayerGO.transform.position = new Vector3(otherPlayer.x, otherPlayer.y, 0);
@@ -192,6 +199,26 @@ public class MapSceneManager : MonoBehaviour
                 remote.SetDirection(otherPlayer.direction);
                 remote.SetTargetPosition(new Vector3(otherPlayer.x, otherPlayer.y, 0));
             }
+        }
+    }
+    
+    private void HandlePlayerOffline(string json)
+    {
+        var message = JsonConvert.DeserializeObject<PlayerOfflineMessage>(json);
+        if (message == null) return;
+
+        int playerId = message.playerId;
+
+        if (otherPlayers.TryGetValue(playerId, out GameObject playerGO))
+        {
+            Destroy(playerGO);
+            otherPlayers.Remove(playerId);
+
+            Debug.Log($"👋 Player {playerId} đã offline và bị xóa khỏi bản đồ.");
+        }
+        else
+        {
+            Debug.LogWarning($"⚠️ Nhận player_offline cho playerId {playerId} nhưng không tìm thấy trong danh sách.");
         }
     }
 }

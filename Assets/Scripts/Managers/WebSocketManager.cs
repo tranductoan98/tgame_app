@@ -111,4 +111,12 @@ public class WebSocketManager : MonoBehaviour
     {
         websocket?.DispatchMessageQueue();
     }
+    async void OnApplicationQuit()
+    {
+        if (websocket != null && websocket.State == WebSocketState.Open)
+        {
+            await websocket.Close();
+            websocket = null;
+        }
+    }
 }

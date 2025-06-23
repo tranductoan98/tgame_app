@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 public class WebSocketManager : MonoBehaviour
 {
-    public static WebSocketManager Instance { get; private set; }
+    public static WebSocketManager Instance { get; set; }
     private WebSocket websocket;
 
     public bool IsConnected => websocket != null && websocket.State == WebSocketState.Open;
@@ -51,7 +51,6 @@ public class WebSocketManager : MonoBehaviour
         websocket.OnMessage += (bytes) =>
         {
             string message = Encoding.UTF8.GetString(bytes);
-            // Debug.Log("📩 Message từ server: " + message);
 
             if (MapSceneManager.Instance != null)
             {

@@ -4107,9 +4107,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1599724867}
-        m_TargetAssemblyTypeName: SceneNavigator, Assembly-CSharp
-        m_MethodName: GoToLoginScene
+      - m_Target: {fileID: 1599724868}
+        m_TargetAssemblyTypeName: PlayerSelectUI, Assembly-CSharp
+        m_MethodName: OnBackToLogin
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4979,7 +4979,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1599724866}
   - component: {fileID: 1599724868}
-  - component: {fileID: 1599724867}
   - component: {fileID: 1599724869}
   - component: {fileID: 1599724870}
   m_Layer: 0
@@ -5004,18 +5003,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1599724867
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1599724865}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e9e5c4c751cb91645bb6c665b2e3436a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1599724868
 MonoBehaviour:
   m_ObjectHideFlags: 0

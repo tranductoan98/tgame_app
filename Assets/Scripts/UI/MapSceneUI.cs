@@ -19,10 +19,14 @@ public class MapSceneUI : MonoBehaviour
         onSuccess: () =>
         {
             Debug.Log("Đăng xuất thành công");
-            if (WebSocketManager.Instance != null && WebSocketManager.Instance.IsConnected)
+            if (WebSocketManager.Instance != null)
             {
                 WebSocketManager.Instance.Disconnect();
+                Destroy(WebSocketManager.Instance.gameObject);
+                WebSocketManager.Instance = null;
+                Debug.Log("🧹 Đã huỷ WebSocketManager");
             }
+            
             SceneManager.LoadScene("LoginScene");
         },
         onError: (err) =>

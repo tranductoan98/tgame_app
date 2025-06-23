@@ -182,6 +182,7 @@ public static class PlayerAPI
             PlayerPrefs.DeleteKey("token");
             PlayerPrefs.DeleteKey("playerid");
             PlayerPrefs.DeleteKey("userId");
+            PlayerPrefs.Save();
             onSuccess?.Invoke();
         }
         else

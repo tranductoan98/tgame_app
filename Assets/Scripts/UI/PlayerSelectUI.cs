@@ -55,7 +55,7 @@ public class PlayerSelectUI : MonoBehaviour
 
         LoadPlayers();
     }
-    
+
     void LoadPlayers()
     {
         StartCoroutine(PlayerAPI.GetPlayers(userId,
@@ -93,6 +93,16 @@ public class PlayerSelectUI : MonoBehaviour
             {
                 Debug.LogError("Lỗi load player: " + err);
             }));
+    }
+
+    public void OnBackToLogin()
+    {
+        PlayerPrefs.DeleteKey("userId");
+        PlayerPrefs.DeleteKey("token");
+        PlayerPrefs.Save();
+
+        Destroy(gameObject);
+        SceneManager.LoadScene("LoginScene");
     }
 
     void OpenRegisterPopup()

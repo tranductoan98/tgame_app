@@ -35,6 +35,8 @@ public class PlayerRenderManager : MonoBehaviour
 
     void Update()
     {
+        // if (GameInputConfig.Instance != null && GameInputConfig.Instance.ShouldBlockInput())
+        //     return;
         bool currentMove = isMovingFunc?.Invoke() ?? false;
 
         if (currentMove != isMoving)

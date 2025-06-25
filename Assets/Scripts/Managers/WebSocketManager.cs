@@ -27,7 +27,7 @@ public class WebSocketManager : MonoBehaviour
     {
         if (IsConnected) return;
 
-        string url = $"{GameConfig.SocketUrl}/ws-game?playerId={playerId}&token={token}";
+        string url = $"{GameConfig.SocketUrl}?playerId={playerId}&token={token}";
 
         websocket = new WebSocket(url);
 
@@ -35,6 +35,15 @@ public class WebSocketManager : MonoBehaviour
         {
             Debug.Log("✅ WebSocket đã kết nối");
             InvokeRepeating(nameof(SendPing), 30f, 30f);
+
+            if (ChatSocketManager.Instance != null)
+            {
+                ChatSocketManager.Instance.Init(token, playerId);
+            }
+            else
+            {
+                Debug.LogError("❌ chatSocketManager lỗi");
+            }
         };
 
         websocket.OnError += (e) =>

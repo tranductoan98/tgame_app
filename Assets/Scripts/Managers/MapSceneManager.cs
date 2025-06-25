@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using UnityEngine.SceneManagement;
 
 public class MapSceneManager : MonoBehaviour
 {
@@ -25,7 +26,6 @@ public class MapSceneManager : MonoBehaviour
 
     void Start()
     {
-        ui = FindFirstObjectByType<MapSceneUI>();
         StartCoroutine(MapSceneAPI.FetchMapInfo(mapId, OnMapInfoLoaded, Debug.LogError));
     }
 
@@ -35,9 +35,6 @@ public class MapSceneManager : MonoBehaviour
 
         mapWidth = info.width;
         mapHeight = info.height;
-
-        if (ui != null)
-            ui.SetMapInfo(info.name);
 
         StartCoroutine(PlayerAPI.getPositionByPlayerId(playerid, positionData =>
         {
@@ -201,7 +198,7 @@ public class MapSceneManager : MonoBehaviour
             }
         }
     }
-    
+
     private void HandlePlayerOffline(string json)
     {
         var message = JsonConvert.DeserializeObject<PlayerOfflineMessage>(json);
@@ -220,5 +217,28 @@ public class MapSceneManager : MonoBehaviour
         {
             Debug.LogWarning($"⚠️ Nhận player_offline cho playerId {playerId} nhưng không tìm thấy trong danh sách.");
         }
+    }
+    
+    public void HandleLogout()
+    {
+        StartCoroutine(PlayerAPI.LogoutPlayer(
+        onSuccess: () =>
+        {
+            Debug.Log("Đăng xuất thành công");
+            if (WebSocketManager.Instance != null)
+            {
+                WebSocketManager.Instance.Disconnect();
+                Destroy(WebSocketManager.Instance.gameObject);
+                WebSocketManager.Instance = null;
+                Debug.Log("🧹 Đã huỷ WebSocketManager");
+            }
+
+            SceneManager.LoadScene("LoginScene");
+        },
+        onError: (err) =>
+        {
+            Debug.LogError("Lỗi đăng xuất: " + err);
+        }
+        ));
     }
 }

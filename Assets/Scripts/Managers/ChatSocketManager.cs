@@ -5,25 +5,46 @@ using System.Text;
 
 public class ChatSocketManager : MonoBehaviour
 {
+    public static ChatSocketManager Instance { get; set; }
     private WebSocket websocket;
 
-    async void Start()
+    public bool IsConnected => websocket != null && websocket.State == WebSocketState.Open;
+
+    private void Awake()
     {
-        websocket = new WebSocket("ws://<YOUR-IP>:8080/ws-chat");
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
 
-        websocket.OnOpen += () => {
-            Debug.Log("🔌 Chat WebSocket Connected!");
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+    
+    public async void Init(string token, int playerId)
+    {
+        string url = $"{GameConfig.ChatSocketUrl}?playerId={playerId}&token={token}";
+
+        websocket = new WebSocket(url);
+
+        websocket.OnOpen += () =>
+        {
+            Debug.Log("🔌 ChatSocket đã kết nối!");
         };
 
-        websocket.OnError += (e) => {
-            Debug.Log("❌ Chat WebSocket Error: " + e);
+        websocket.OnError += (e) =>
+        {
+            Debug.Log("❌ ChatSocket lỗi: " + e);
         };
 
-        websocket.OnClose += (e) => {
-            Debug.Log("🔌 Chat WebSocket Closed");
+        websocket.OnClose += (e) =>
+        {
+            Debug.Log("🔌 ChatSocket đóng");
         };
 
-        websocket.OnMessage += (bytes) => {
+        websocket.OnMessage += (bytes) =>
+        {
             string message = Encoding.UTF8.GetString(bytes);
             Debug.Log("📩 Received chat: " + message);
         };
@@ -36,7 +57,7 @@ public class ChatSocketManager : MonoBehaviour
         websocket?.DispatchMessageQueue();
     }
 
-    public async void SendMessage(string message)
+    public async void SendChatMessage(string message)
     {
         if (websocket.State == WebSocketState.Open)
         {
